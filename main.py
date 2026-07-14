@@ -18,7 +18,8 @@ SMTP_SERVER = os.getenv("SMTP_SERVER")
 SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
 SMTP_USER = os.getenv("SMTP_USER")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
-TO_EMAIL = os.getenv("TO_EMAIL")
+TO_EMAIL_RAW = os.getenv("TO_EMAIL", "")
+EMAIL_LIST = [email.strip() for email in TO_EMAIL_RAW.split(",") if email.strip()]
 
 def safe_float(value) -> float:
     """문자열이나 None 값이 유입되어도 안전하게 실수(float)로 변환합니다."""
@@ -249,7 +250,7 @@ def send_mail_task(alerts_list: list):
 
     msg = MIMEMultipart('alternative')
     msg['From'] = f"{Header('모니터링 시스템', 'utf-8').encode()} <{SMTP_USER}>"
-    msg['To'] = TO_EMAIL
+    msg['To'] = ", ".join(EMAIL_LIST)
     msg['Subject'] = "[보고] 인프라 자원 일일 종합 보고서"
 
     full_html = f"""
@@ -274,7 +275,7 @@ def send_mail_task(alerts_list: list):
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
             server.starttls()
             server.login(SMTP_USER, SMTP_PASSWORD)
-            server.sendmail(SMTP_USER, TO_EMAIL, msg.as_string())
+            server.sendmail(SMTP_USER, EMAIL_LIST, msg.as_string())
         print("메일 발송 완료.")
     except Exception as e:
         print(f"메일 발송 오류: {e}")
