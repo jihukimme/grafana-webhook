@@ -21,6 +21,15 @@ SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 TO_EMAIL_RAW = os.getenv("TO_EMAIL", "")
 EMAIL_LIST = [email.strip() for email in TO_EMAIL_RAW.split(",") if email.strip()]
 
+# 네트워크 지표 제외 대상 서버 목록 (하드코딩)
+EXCLUDE_NETWORK_SERVERS = {
+    "DW-MES1 (MES 청주지점)",
+    "DW-MES2 (MES 이천지점)",
+    "Linux-Test-Server (On-Premise)",
+    "Windows-Test-Server (On-Premise)",
+    "Zabbix server"
+}
+
 def safe_float(value) -> float:
     """문자열이나 None 값이 유입되어도 안전하게 실수(float)로 변환합니다."""
     try:
@@ -50,6 +59,10 @@ def generate_html_table(alerts: list) -> str:
         host = labels.get('host', 'Unknown Server')
         alert_name = labels.get('alertname', 'Unknown')
         item = labels.get('item', '-')
+
+        # 특정 서버의 네트워크 지표 제외 처리
+        if alert_name == "Daily-Network" and host in EXCLUDE_NETWORK_SERVERS:
+            continue
 
         # 서버 이름별 데이터 그룹화
         if host not in server_groups:
@@ -276,7 +289,10 @@ def send_mail_task(alerts_list: list):
         <p style="font-family:Malgun Gothic; font-size:14px; color:#555555; margin-bottom:4px;">지난 24시간 동안 수집된 인프라 장비의 자원 요약 상태 정보입니다.</p>
         <br>
         <p style="font-family:Malgun Gothic; font-size:14px; color:#333333; margin-top:0; margin-bottom:2px;">※ 임계치를 초과한 수치는 빨간색으로 표시되며, 수치가 0.00인 데이터는 표에서 제외됩니다.</p>
-        <p style="font-family:Malgun Gothic; font-size:13px; color:#666666; margin-top:0; margin-bottom:15px;">&nbsp;&nbsp;(기준 - CPU/메모리/디스크: 90% 이상, 네트워크: 800 Mbps 이상)</p>
+        <p style="font-family:Malgun Gothic; font-size:13px; color:#666666; margin-top:0; margin-bottom:15px;">
+          &nbsp;&nbsp;(기준 - CPU/메모리/디스크: 90% 이상, 네트워크: 800 Mbps 이상)<br>
+          &nbsp;&nbsp;* 트래픽 발생량이 적은 특정 서버(DW-MES1, DW-MES2, Linux-Test-Server (On-Premise), Windows-Test-Server (On-Premise), Zabbix server)는 네트워크 지표를 제외합니다.
+        </p>
         <br>
         {html_content}
         <br>
