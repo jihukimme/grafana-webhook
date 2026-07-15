@@ -68,8 +68,8 @@ def generate_html_table(alerts: list) -> str:
             threshold = 90
             unit = "%"
 
-        avg_val = f"{round(avg_raw, 2)}{unit}"
-        max_val = f"{round(max_raw, 2)}{unit}" if alert_name != "Daily-Disk" else "-"
+        avg_val = f"{avg_raw:.2f}{unit}"
+        max_val = f"{max_raw:.2f}{unit}" if alert_name != "Daily-Disk" else "-"
 
         # 임계치 초과 여부 점검 및 스타일 정의
         is_critical = False
@@ -218,8 +218,8 @@ def generate_html_table(alerts: list) -> str:
                 threshold = 90
                 unit = "%"
 
-            avg_val = f"{round(avg_raw, 2)}{unit}"
-            max_val = f"{round(max_raw, 2)}{unit}" if alert_name != "Daily-Disk" else "-"
+            avg_val = f"{avg_raw:.2f}{unit}"
+            max_val = f"{max_raw:.2f}{unit}" if alert_name != "Daily-Disk" else "-"
 
             if alert_name == "Daily-Disk":
                 if avg_raw >= threshold:
