@@ -125,9 +125,9 @@ def generate_html_table(alerts: list) -> str:
                 </tr>
             """
 
-    # 2. 모니터링 대상 서버 명단 행 생성
+    # 2. 모니터링 대상 서버 명단 행 생성 (이름 순 정렬)
     server_list_rows = ""
-    for idx, host in enumerate(server_groups.keys(), 1):
+    for idx, host in enumerate(sorted(server_groups.keys()), 1):
         host_style = "color: red;" if host in critical_hosts else ""
         server_list_rows += f"""
             <tr style="height:25px;">
@@ -186,7 +186,7 @@ def generate_html_table(alerts: list) -> str:
     <h3 style="font-family:'Malgun Gothic'; color:#111111; margin-bottom:5px;">📋 서버별 전체 자원 현황</h3>
     """
 
-    for host, host_alerts in server_groups.items():
+    for host, host_alerts in sorted(server_groups.items()):
         # 지정한 순서(CPU -> 메모리 -> 네트워크 -> 디스크)대로 내부 알림 데이터를 정렬합니다.
         sorted_alerts = sorted(
             host_alerts, 
