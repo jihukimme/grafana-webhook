@@ -218,6 +218,14 @@ def generate_html_table(alerts: list) -> str:
                 threshold = 90
                 unit = "%"
 
+            # 수치가 0.00인 경우 표기에서 제외
+            if alert_name == "Daily-Disk":
+                if avg_raw == 0.00:
+                    continue
+            else:
+                if avg_raw == 0.00 and max_raw == 0.00:
+                    continue
+
             avg_val = f"{avg_raw:.2f}{unit}"
             max_val = f"{max_raw:.2f}{unit}" if alert_name != "Daily-Disk" else "-"
 
@@ -267,7 +275,7 @@ def send_mail_task(alerts_list: list):
         <h2 style="font-family:Malgun Gothic; color:#222222;">📊 인프라 자원 일일 종합 보고</h2>
         <p style="font-family:Malgun Gothic; font-size:14px; color:#555555; margin-bottom:4px;">지난 24시간 동안 수집된 인프라 장비의 자원 요약 상태 정보입니다.</p>
         <br>
-        <p style="font-family:Malgun Gothic; font-size:14px; color:#333333; margin-top:0; margin-bottom:2px;">※ 임계치를 초과한 수치는 빨간색으로 표시됩니다.</p>
+        <p style="font-family:Malgun Gothic; font-size:14px; color:#333333; margin-top:0; margin-bottom:2px;">※ 임계치를 초과한 수치는 빨간색으로 표시되며, 수치가 0.00인 데이터는 표에서 제외됩니다.</p>
         <p style="font-family:Malgun Gothic; font-size:13px; color:#666666; margin-top:0; margin-bottom:15px;">&nbsp;&nbsp;(기준 - CPU/메모리/디스크: 90% 이상, 네트워크: 800 Mbps 이상)</p>
         <br>
         {html_content}
