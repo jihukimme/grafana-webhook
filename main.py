@@ -33,6 +33,7 @@ def generate_html_table(alerts: list) -> str:
     
     server_groups = {}
     critical_rows = ""  # 위험 지표 요약 표에 담길 행 데이터
+    critical_hosts = set()  # 임계치를 초과한 지표가 있는 서버명을 보관할 집합
     
     # 지표 정렬을 위한 기준 정의 (CPU -> 메모리 -> 네트워크 -> 디스크)
     metric_order = {
@@ -101,6 +102,7 @@ def generate_html_table(alerts: list) -> str:
 
         # 위험 수치 발견 시 요약 표 행 데이터 구성
         if is_critical:
+            critical_hosts.add(host)
             critical_rows += f"""
                 <tr style="height:25px; background-color: #fff5f5;">
                     <td style="border: 1px solid #999999; text-align: left; padding-left: 15px; font-weight: bold;">{host}</td>
@@ -113,10 +115,11 @@ def generate_html_table(alerts: list) -> str:
     # 2. 모니터링 대상 서버 명단 행 생성
     server_list_rows = ""
     for idx, host in enumerate(server_groups.keys(), 1):
+        host_style = "color: red;" if host in critical_hosts else ""
         server_list_rows += f"""
             <tr style="height:25px;">
                 <td style="border: 1px solid #999999;">{idx}</td>
-                <td style="border: 1px solid #999999; text-align: left; padding-left: 15px; font-weight: bold;">{host}</td>
+                <td style="border: 1px solid #999999; text-align: left; padding-left: 15px; font-weight: bold; {host_style}">{host}</td>
             </tr>
         """
 
@@ -177,8 +180,13 @@ def generate_html_table(alerts: list) -> str:
             key=lambda x: metric_order.get((x.get('labels') or {}).get('alertname', ''), 99)
         )
 
+        if host in critical_hosts:
+            host_title_html = f"🖥️ 서버: <span style=\"color: red;\">{host}</span>"
+        else:
+            host_title_html = f"🖥️ 서버: {host}"
+
         html_result += f"""
-        <h4 style="font-family:'Malgun Gothic'; color:#333333; margin-top:20px; margin-bottom:6px;">🖥️ 서버: {host}</h4>
+        <h4 style="font-family:'Malgun Gothic'; color:#333333; margin-top:20px; margin-bottom:6px;">{host_title_html}</h4>
         <table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse; width:100%; max-width:700px; font-family:'Malgun Gothic', sans-serif; font-size:14px; border-color:#999999; text-align:center; margin-bottom:15px;">
             <thead>
                 <tr style="background-color:#e6e6e6; color:#333333; font-weight:bold; height:30px;">
