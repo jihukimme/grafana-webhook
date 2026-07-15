@@ -289,10 +289,9 @@ def send_mail_task(alerts_list: list):
         <p style="font-family:Malgun Gothic; font-size:14px; color:#555555; margin-bottom:4px;">지난 24시간 동안 수집된 인프라 장비의 자원 요약 상태 정보입니다.</p>
         <br>
         <p style="font-family:Malgun Gothic; font-size:14px; color:#333333; margin-top:0; margin-bottom:2px;">※ 임계치를 초과한 수치는 빨간색으로 표시되며, 수치가 0.00인 데이터는 표에서 제외됩니다.</p>
-        <p style="font-family:Malgun Gothic; font-size:13px; color:#666666; margin-top:0; margin-bottom:15px;">
-          &nbsp;&nbsp;(기준 - CPU/메모리/디스크: 90% 이상, 네트워크: 800 Mbps 이상)<br>
-          &nbsp;&nbsp;* 트래픽 발생량이 적은 특정 서버(DW-MES1, DW-MES2, Linux-Test-Server (On-Premise), Windows-Test-Server (On-Premise), Zabbix server)는 네트워크 지표를 제외합니다.
-        </p>
+        <p style="font-family:Malgun Gothic; font-size:13px; color:#666666; margin-top:0; margin-bottom:15px;">&nbsp;&nbsp;(기준 - CPU/메모리/디스크: 90% 이상, 네트워크: 800 Mbps 이상)</p>
+        <p style="font-family:Malgun Gothic; font-size:14px; color:#333333; margin-top:0; margin-bottom:2px;">※ 트래픽 발생량이 적은 특정 서버의 네트워크 지표는 제외됩니다.</p>
+        <p style="font-family:Malgun Gothic; font-size:13px; color:#666666; margin-top:0; margin-bottom:15px;">&nbsp;&nbsp;(예 - DW-MES1, DW-MES2, Linux-Test-Server, Windows-Test-Server, Zabbix server)</p>
         <br>
         {html_content}
         <br>
