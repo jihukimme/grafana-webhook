@@ -18,6 +18,8 @@ SMTP_SERVER = os.getenv("SMTP_SERVER")
 SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
 SMTP_USER = os.getenv("SMTP_USER")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+SMTP_FROM_ADDRESS = os.getenv("SMTP_FROM_ADDRESS", SMTP_USER)
+SMTP_FROM_NAME = os.getenv("SMTP_FROM_NAME", "모니터링 시스템")
 TO_EMAIL_RAW = os.getenv("TO_EMAIL", "")
 EMAIL_LIST = [email.strip() for email in TO_EMAIL_RAW.split(",") if email.strip()]
 
@@ -278,7 +280,10 @@ def send_mail_task(alerts_list: list):
     html_content = generate_html_table(alerts_list)
 
     msg = MIMEMultipart('alternative')
-    msg['From'] = f"{Header('모니터링 시스템', 'utf-8').encode()} <{SMTP_USER}>"
+
+    # SMTP_USER 대신 SMTP_FROM_ADDRESS를 사용하여 보낸 사람 주소를 표시
+    msg['From'] = f"{Header(SMTP_FROM_NAME, 'utf-8').encode()} <{SMTP_FROM_ADDRESS}>"
+
     msg['To'] = ", ".join(EMAIL_LIST)
     msg['Subject'] = "[보고] 인프라 자원 일일 종합 보고서"
 
@@ -305,8 +310,12 @@ def send_mail_task(alerts_list: list):
     try:
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
             server.starttls()
+
+            # 로그인은 실제 계정(SMTP_USER)으로 진행
             server.login(SMTP_USER, SMTP_PASSWORD)
-            server.sendmail(SMTP_USER, EMAIL_LIST, msg.as_string())
+
+            # 실제 메일을 송신 할 때는 SMTP_FROM_ADDRESS를 사용
+            server.sendmail(SMTP_FROM_ADDRESS, EMAIL_LIST, msg.as_string())
         print("메일 발송 완료.")
     except Exception as e:
         print(f"메일 발송 오류: {e}")
