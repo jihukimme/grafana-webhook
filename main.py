@@ -298,7 +298,7 @@ def send_mail_task(alerts_list: list):
     full_html = f"""
     <html>
       <body>
-        <h2 style="font-family:Malgun Gothic; color:#222222;">📊 인프라 자원 일일 종합 보고 <span style="font-size: 14px; color: #666666; font-weight: normal; margin-left: 10px;">{time_range_text}</span></h2>
+        <h2 style="font-family:Malgun Gothic; color:#222222;">📊 인프라 자원 일일 종합 보고 &nbsp;&nbsp;&nbsp;<font size="3" color="#666666" style="font-weight: normal;">{time_range_text}</font></h2>
         <p style="font-family:Malgun Gothic; font-size:14px; color:#555555; margin-bottom:4px;">지난 24시간 동안 수집된 인프라 장비의 자원 요약 상태 정보입니다.</p>
         <br>
         <p style="font-family:Malgun Gothic; font-size:14px; color:#333333; margin-top:0; margin-bottom:2px;">※ 임계치를 초과한 수치는 빨간색으로 표시되며, 수치가 0.00인 데이터는 표에서 제외됩니다.</p>
