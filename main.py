@@ -1,10 +1,10 @@
 import os
 import smtplib
 from datetime import datetime, timedelta
-from zoneinfo import ZoneInfo
 from email.header import Header
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from zoneinfo import ZoneInfo
 
 from dotenv import load_dotenv
 from fastapi import BackgroundTasks, FastAPI, Request, status
@@ -27,10 +27,10 @@ EMAIL_LIST = [email.strip() for email in TO_EMAIL_RAW.split(",") if email.strip(
 
 # 네트워크 지표 제외 대상 서버 목록 (하드코딩)
 EXCLUDE_NETWORK_SERVERS = {
-    "DW-MES1 (MES 청주지점)",
-    "DW-MES2 (MES 이천지점)",
-    "Linux-Test-Server (On-Premise)",
-    "Windows-Test-Server (On-Premise)",
+    "DW-MES1 (MES_CJ)",
+    "DW-MES2 (MES_IC)",
+    "GIT-TEST (On-Premise)",
+    "CompilePC (On-Premise)",
     "Zabbix server"
 }
 
@@ -304,7 +304,7 @@ def send_mail_task(alerts_list: list):
         <p style="font-family:Malgun Gothic; font-size:14px; color:#333333; margin-top:0; margin-bottom:2px;">※ 임계치를 초과한 수치는 빨간색으로 표시되며, 수치가 0.00인 데이터는 표에서 제외됩니다.</p>
         <p style="font-family:Malgun Gothic; font-size:13px; color:#666666; margin-top:0; margin-bottom:15px;">&nbsp;&nbsp;(기준 - CPU/메모리/디스크: 90% 이상, 네트워크: 800 Mbps 이상)</p>
         <p style="font-family:Malgun Gothic; font-size:14px; color:#333333; margin-top:0; margin-bottom:2px;">※ 트래픽 발생량이 적은 특정 서버의 네트워크 지표는 제외됩니다.</p>
-        <p style="font-family:Malgun Gothic; font-size:13px; color:#666666; margin-top:0; margin-bottom:15px;">&nbsp;&nbsp;(예 - DW-MES1, DW-MES2, Linux-Test-Server, Windows-Test-Server, Zabbix server)</p>
+        <p style="font-family:Malgun Gothic; font-size:13px; color:#666666; margin-top:0; margin-bottom:15px;">&nbsp;&nbsp;(예 - DW-MES1, DW-MES2, GIT-TEST, CompilePC, Zabbix server)</p>
         <br>
         {html_content}
         <br>
