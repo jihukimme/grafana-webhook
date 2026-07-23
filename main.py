@@ -1,5 +1,7 @@
 import os
 import smtplib
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from email.header import Header
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -279,6 +281,12 @@ def send_mail_task(alerts_list: list):
     """사내 SMTP 서버를 통해 완성된 HTML 표 메일을 발송합니다."""
     html_content = generate_html_table(alerts_list)
 
+    # 감시 기준 시간(최근 24시간 범위) 계산
+    now = datetime.now(ZoneInfo("Asia/Seoul"))
+    end_time = now.replace(minute=0, second=0, microsecond=0)
+    start_time = end_time - timedelta(days=1)
+    time_range_text = f"({start_time.strftime('%Y-%m-%d %H:%M')} ~ {end_time.strftime('%Y-%m-%d %H:%M')})"
+
     msg = MIMEMultipart('alternative')
 
     # SMTP_USER 대신 SMTP_FROM_ADDRESS를 사용하여 보낸 사람 주소를 표시
@@ -290,7 +298,7 @@ def send_mail_task(alerts_list: list):
     full_html = f"""
     <html>
       <body>
-        <h2 style="font-family:Malgun Gothic; color:#222222;">📊 인프라 자원 일일 종합 보고</h2>
+        <h2 style="font-family:Malgun Gothic; color:#222222;">📊 인프라 자원 일일 종합 보고 <span style="font-size: 14px; color: #666666; font-weight: normal; margin-left: 10px;">{time_range_text}</span></h2>
         <p style="font-family:Malgun Gothic; font-size:14px; color:#555555; margin-bottom:4px;">지난 24시간 동안 수집된 인프라 장비의 자원 요약 상태 정보입니다.</p>
         <br>
         <p style="font-family:Malgun Gothic; font-size:14px; color:#333333; margin-top:0; margin-bottom:2px;">※ 임계치를 초과한 수치는 빨간색으로 표시되며, 수치가 0.00인 데이터는 표에서 제외됩니다.</p>
