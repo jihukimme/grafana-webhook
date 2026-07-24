@@ -293,7 +293,7 @@ def send_mail_task(alerts_list: list):
     msg['From'] = f"{Header(SMTP_FROM_NAME, 'utf-8').encode()} <{SMTP_FROM_ADDRESS}>"
 
     msg['To'] = ", ".join(EMAIL_LIST)
-    msg['Subject'] = "[보고] 인프라 자원 일일 종합 보고서"
+    msg['Subject'] = f"[보고] 인프라 자원 일일 종합 보고서 {time_range_text}"
 
     full_html = f"""
     <html>
